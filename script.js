@@ -9,7 +9,7 @@ let uploadedFile = null;
 let userCampaigns = [];
 let isInfluencerFlow = false;
 
-// Country State Database Mapping
+// Country State Mapping
 const countryStateMap = {
   "India": ["Andhra Pradesh", "Delhi NCR", "Gujarat", "Karnataka", "Maharashtra", "Punjab", "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal"],
   "United States": ["California", "Florida", "Illinois", "New York", "Texas", "Washington"],
@@ -19,7 +19,7 @@ const countryStateMap = {
   "Canada": ["Alberta", "British Columbia", "Ontario", "Quebec"]
 };
 
-// Expanded Platform Catalogue
+// Platform Catalogue
 const platforms = [
   { id: 'meta', name: 'Meta Ads (FB & Insta)', icon: 'fa-brands fa-meta', desc: 'Feed, Reels & Story campaigns.' },
   { id: 'google', name: 'Google Ads', icon: 'fa-brands fa-google', desc: 'Search, Display & Shopping ads.' },
@@ -40,7 +40,7 @@ const platforms = [
   { id: 'billboard', name: 'Digital Billboards', icon: 'fa-solid fa-rectangle-ad', desc: 'High-visibility LED outdoor screens.' }
 ];
 
-// 6 Tier Standard Plans
+// 6 Tier Plans
 const sixPlanOptions = [
   { id: 'p1', name: 'Micro Boost', basePrice: 499, leads: '200 - 500', days: 3 },
   { id: 'p2', name: 'Starter Launch', basePrice: 999, leads: '500 - 1,200', days: 5 },
@@ -50,7 +50,18 @@ const sixPlanOptions = [
   { id: 'p6', name: 'Dominator VIP', basePrice: 49999, leads: '100,000+ Reach', days: 45 }
 ];
 
-// Screen Navigation
+// Mobile Menu Navigation Handlers
+function toggleMobileMenu() {
+  const menu = document.getElementById('nav-menu');
+  menu.classList.toggle('open');
+}
+
+function closeMobileMenu() {
+  const menu = document.getElementById('nav-menu');
+  menu.classList.remove('open');
+}
+
+// Navigation & Auth Guards
 function navigateTo(viewId) {
   document.querySelectorAll('.page-view').forEach(view => view.classList.add('hidden'));
   document.getElementById(viewId).classList.remove('hidden');
@@ -86,7 +97,7 @@ function startCampaignWith(platformId) {
   if (p) choosePlatform(p.id, p.name);
 }
 
-// CAPTCHA Generator
+// CAPTCHA
 function initCaptcha() {
   const n1 = Math.floor(Math.random() * 9) + 1;
   const n2 = Math.floor(Math.random() * 9) + 1;
@@ -97,7 +108,7 @@ function initCaptcha() {
   }
 }
 
-// AUTHENTICATION LOGIC
+// AUTHENTICATION
 document.getElementById('signup-form').addEventListener('submit', function (e) {
   e.preventDefault();
   const pass = document.getElementById('signup-password').value;
@@ -154,11 +165,16 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
 });
 
 function updateUserNav() {
-  const area = document.getElementById('nav-user-area');
-  area.innerHTML = `
-    <button class="btn btn-secondary" onclick="navigateTo('view-profile')"><i class="fa-solid fa-user"></i> ${activeUser.firstName}</button>
-    <button class="btn btn-danger btn-small" onclick="logout()"><i class="fa-solid fa-power-off"></i></button>
+  const desktopArea = document.getElementById('nav-user-area');
+  const mobileArea = document.getElementById('mobile-nav-user-area');
+
+  const authMarkup = `
+    <button class="btn btn-secondary" onclick="navigateTo('view-profile'); closeMobileMenu();"><i class="fa-solid fa-user"></i> ${activeUser.firstName}</button>
+    <button class="btn btn-danger btn-small" onclick="logout()"><i class="fa-solid fa-power-off"></i> Logout</button>
   `;
+
+  desktopArea.innerHTML = authMarkup;
+  mobileArea.innerHTML = authMarkup;
 }
 
 function logout() {
@@ -166,7 +182,7 @@ function logout() {
   location.reload();
 }
 
-// PROFILE LOGIC
+// PROFILE
 function populateProfileForm() {
   document.getElementById('profile-fullname').innerText = `${activeUser.firstName} ${activeUser.lastName}`;
   document.getElementById('profile-firstname').value = activeUser.firstName;
@@ -207,7 +223,7 @@ document.getElementById('profile-form').addEventListener('submit', function (e) 
   populateProfileForm();
 });
 
-// PLATFORMS RENDERER
+// PLATFORMS & PLANS
 function renderPlatforms() {
   const grid = document.getElementById('platform-grid');
   const homeGrid = document.getElementById('home-services-grid');
@@ -218,7 +234,7 @@ function renderPlatforms() {
         <div class="platform-card disabled-card">
           <div class="platform-icon-wrap"><i class="${p.icon}"></i></div>
           <h3>${p.name}</h3>
-          <p style="font-size:0.8rem; color:var(--muted);">${p.desc}</p>
+          <p style="font-size:0.75rem; color:var(--muted);">${p.desc}</p>
           <span class="ban-badge"><i class="fa-solid fa-ban"></i> ${p.note}</span>
         </div>
       `;
@@ -227,7 +243,7 @@ function renderPlatforms() {
       <div class="platform-card" onclick="choosePlatform('${p.id}', '${p.name}')">
         <div class="platform-icon-wrap"><i class="${p.icon}"></i></div>
         <h3>${p.name}</h3>
-        <p style="font-size:0.8rem; color:var(--muted);">${p.desc}</p>
+        <p style="font-size:0.75rem; color:var(--muted);">${p.desc}</p>
       </div>
     `;
   }).join('');
@@ -283,7 +299,7 @@ function render6Plans() {
     return `
       <div class="plan-card" onclick="choosePlan('${plan.name}', ${plan.basePrice}, ${discountedPrice}, '${plan.leads}', ${plan.days})">
         <h3>${plan.name}</h3>
-        <p><strong>${plan.leads}</strong> Est. Reach / Scope</p>
+        <p><strong>${plan.leads}</strong> Est. Scope</p>
         <p><strong>${plan.days} Days</strong> Duration</p>
         <div style="margin-top: 1rem;">
           <span class="strikethrough">₹${plan.basePrice}</span>
@@ -302,7 +318,6 @@ function choosePlan(name, originalPrice, finalPrice, leads, days) {
   }
 }
 
-// INFLUENCER DIRECT FLOW
 function proceedToInfluencerPayment() {
   if (!requireAuth('view-payment')) return;
 
@@ -336,7 +351,7 @@ function proceedToInfluencerPayment() {
   navigateTo('view-payment');
 }
 
-// FORM DYNAMIC HANDLERS
+// FORM HANDLERS
 function handleIndustryChange() {
   const select = document.getElementById('campaign-industry');
   const customGroup = document.getElementById('custom-industry-group');
@@ -413,7 +428,7 @@ document.getElementById('campaign-details-form').addEventListener('submit', func
   navigateTo('view-upload');
 });
 
-// UPLOAD MEDIA HANDLERS
+// MEDIA UPLOAD
 const fileInput = document.getElementById('file-input');
 fileInput.addEventListener('change', function () {
   if (this.files && this.files[0]) handleFileUpload(this.files[0]);
@@ -463,7 +478,7 @@ function reuploadFile() {
   fileInput.click();
 }
 
-// CHECKOUT SUMMARY & RAZORPAY INTEGRATION
+// CHECKOUT & RAZORPAY
 function showCheckoutScreen() {
   document.getElementById('summary-brand').innerText = campaignFormValues.brand;
   document.getElementById('summary-platform').innerText = currentPlatform.name;
@@ -550,7 +565,6 @@ function renderStudio() {
   `).join('');
 }
 
-// On Page Load Init
 window.onload = () => {
   renderPlatforms();
   initCaptcha();
