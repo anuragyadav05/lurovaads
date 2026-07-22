@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUROVA Ads | All-in-One Multi-Platform Ad Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo" onclick="navigateTo('view-home')">LUROVA <span class="highlight">Ads</span></div>
+    
+    <nav class="nav-links">
+      <a href="#" onclick="navigateTo('view-home')">Home</a>
+      <a href="#" onclick="scrollToSection('services')">Services</a>
+      <a href="#" onclick="scrollToSection('how-it-works')">How It Works</a>
+      <a href="#" onclick="navigateTo('view-platforms')">Ad Platforms</a>
+      <a href="#" onclick="requireAuth('view-progress-studio')">Progress Studio</a>
+    </nav>
+
+    <div class="nav-right" id="nav-user-area">
+      <button class="btn btn-secondary" onclick="navigateTo('view-login')"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+      <button class="btn btn-primary" onclick="navigateTo('view-signup')">Sign Up</button>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <section id="view-home" class="page-view">
+      <div class="hero">
+        <div class="hero-text">
+          <span class="badge"><i class="fa-solid fa-bolt"></i> Guaranteed 15% Cheaper Pricing</span>
+          <h1>Launch Ads Across <span class="gradient-text">Social, OTT, Delivery & TV</span> Networks</h1>
+          <p>Meta, Google, TikTok, Netflix, Zomato, Swiggy, Newspaper, Influencer Marketing & TV Ads—all managed under one roof.</p>
+          <div class="hero-cta">
+            <button class="btn btn-primary btn-lg" onclick="handleGetStarted()">Get Started <i class="fa-solid fa-arrow-right"></i></button>
+            <button class="btn btn-secondary btn-lg" onclick="scrollToSection('how-it-works')">How It Works</button>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="LUROVA Dashboard" />
+        </div>
+      </div>
+
+      <div class="stats-banner">
+        <div class="stat-card">
+          <h2>15% OFF</h2>
+          <p>Flat Discount Applied</p>
+        </div>
+        <div class="stat-card">
+          <h2>15+</h2>
+          <p>Integrated Networks</p>
+        </div>
+        <div class="stat-card">
+          <h2>₹499 - ₹49,999</h2>
+          <p>Flexible Ad Plans</p>
+        </div>
+        <div class="stat-card">
+          <h2>Influencers</h2>
+          <p>Dedicated Agent Consults</p>
+        </div>
+      </div>
+
+      <div id="services" class="section-container">
+        <div class="section-header">
+          <h2>Omnichannel Advertising Channels</h2>
+          <p>Explore digital, quick-commerce, streaming, traditional, and creator marketing solutions.</p>
+        </div>
+        <div class="services-grid" id="home-services-grid">
+          </div>
+      </div>
+
+      <div id="how-it-works" class="section-container bg-alt">
+        <div class="section-header">
+          <h2>How LUROVA Works</h2>
+          <p>Four simple steps to get your advertisement running everywhere.</p>
+        </div>
+        <div class="steps-grid">
+          <div class="step-box">
+            <div class="step-num">01</div>
+            <h3>Pick Platform</h3>
+            <p>Select from social apps, OTT streaming, quick-commerce delivery, newspapers, or influencers.</p>
+          </div>
+          <div class="step-box">
+            <div class="step-num">02</div>
+            <h3>Choose Package</h3>
+            <p>Pick a plan starting from ₹499 to ₹49,999 with an automatic 15% discount applied.</p>
+          </div>
+          <div class="step-box">
+            <div class="step-num">03</div>
+            <h3>Configure Campaign</h3>
+            <p>Define targeted country, state dropdowns, custom CTAs, age filters, and media creatives.</p>
+          </div>
+          <div class="step-box">
+            <div class="step-num">04</div>
+            <h3>Track via Studio</h3>
+            <p>Monitor campaign runtimes, lead updates, and agent consultations in your Progress Studio.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-signup" class="page-view hidden">
+      <div class="auth-card">
+        <h2>Create LUROVA Account</h2>
+        <p class="subtitle">Sign up to launch and manage multi-channel ad campaigns.</p>
+        <form id="signup-form" class="grid-form">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="signup-firstname" placeholder="John" required />
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="signup-lastname" placeholder="Doe" required />
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="signup-email" placeholder="john@example.com" required />
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="signup-phone" placeholder="9876543210" required />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="signup-password" placeholder="••••••••" required />
+          </div>
+          <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" id="signup-confirm-password" placeholder="••••••••" required />
+          </div>
+          <div class="form-group full-width">
+            <label>CAPTCHA Verification: What is <span id="captcha-question">...</span>?</label>
+            <input type="number" id="captcha-answer" placeholder="Enter answer" required />
+          </div>
+          <button type="submit" class="btn btn-primary full-width">Complete Registration</button>
+        </form>
+        <p class="auth-switch">Already registered? <a href="#" onclick="navigateTo('view-login')">Log In here</a></p>
+      </div>
+    </section>
+
+    <section id="view-login" class="page-view hidden">
+      <div class="auth-card">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Login to access your profile, campaigns, and Progress Studio.</p>
+        <form id="login-form">
+          <div class="form-group">
+            <label>Registered Email or Phone Number</label>
+            <input type="text" id="login-identifier" placeholder="Email or Phone" required />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="login-password" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary full-width">Log In</button>
+        </form>
+        <p class="auth-switch">New customer? <a href="#" onclick="navigateTo('view-signup')">Create an account</a></p>
+      </div>
+    </section>
+
+    <section id="view-profile" class="page-view hidden">
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="avatar-wrap">
+            <img id="profile-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Profile Photo" />
+          </div>
+          <div>
+            <h2 id="profile-fullname">User Full Name</h2>
+            <p id="profile-role" class="badge">LUROVA Advertiser</p>
+          </div>
+        </div>
+        
+        <form id="profile-form">
+          <div class="grid-form">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" id="profile-firstname" disabled />
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" id="profile-lastname" disabled />
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="profile-email" disabled />
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" id="profile-phone" disabled />
+            </div>
+          </div>
+
+          <div class="profile-actions">
+            <button type="button" id="edit-profile-btn" class="btn btn-secondary" onclick="toggleProfileEdit()"><i class="fa-solid fa-pen-to-square"></i> Edit Details</button>
+            <button type="submit" id="save-profile-btn" class="btn btn-primary hidden"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+            <button type="button" class="btn btn-danger" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section id="view-platforms" class="page-view hidden">
+      <div class="content-box">
+        <span class="badge">Step 1 of 5</span>
+        <h2>Select Ad Platform</h2>
+        <p class="subtitle">Choose from social, streaming, quick-commerce, print, or creator services.</p>
+        <div class="platform-grid" id="platform-grid"></div>
+      </div>
+    </section>
+
+    <section id="view-plans" class="page-view hidden">
+      <div class="content-box" id="plans-container-box">
+        <span class="badge">Step 2 of 5</span>
+        <h2>Select Plan for <span id="selected-platform-title" class="gradient-text">Platform</span></h2>
+        <p class="subtitle" id="plans-subtitle-text">Choose from 6 transparent budget packages with 15% automatic discount.</p>
+        
+        <div class="plans-grid" id="plans-grid"></div>
+
+        <div id="influencer-custom-card" class="influencer-box hidden">
+          <div class="influencer-header">
+            <i class="fa-solid fa-users-viewfinder influencer-icon"></i>
+            <h3>Influencer Marketing Consultation & Agent Assignment</h3>
+          </div>
+          <p class="influencer-desc">
+            Influencer marketing budgets start from <strong>₹4,999</strong> and scale based on creator tiers (Micro, Macro, Celebrity) and your custom reach requirements.
+          </p>
+          <div class="influencer-perks">
+            <div class="perk-item"><i class="fa-solid fa-circle-check"></i> Dedicated Personal Account Agent Assigned</div>
+            <div class="perk-item"><i class="fa-solid fa-circle-check"></i> Niche Creator Shortlisting & Negotiations</div>
+            <div class="perk-item"><i class="fa-solid fa-circle-check"></i> End-to-End Content Strategy & Management</div>
+          </div>
+          <div class="influencer-pricing-card">
+            <span>Consultation & Agent Fee:</span>
+            <p><span class="strikethrough">₹399</span> <strong class="gradient-text" style="font-size:1.8rem; margin-left:8px;">₹339</strong> <small style="color:green;">(15% OFF)</small></p>
+          </div>
+          <button class="btn btn-primary btn-lg" onclick="proceedToInfluencerPayment()"><i class="fa-solid fa-handshake"></i> Book Meeting & Pay Consultation Fee</button>
+        </div>
+
+        <div class="page-actions">
+          <button class="btn btn-secondary" onclick="navigateTo('view-platforms')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-details" class="page-view hidden">
+      <div class="content-box details-box">
+        <span class="badge">Step 3 of 5</span>
+        <h2>Campaign Setup & Audience Targeting</h2>
+        <p class="subtitle">Configure brand information, geographic filters, and conversion buttons.</p>
+        
+        <form id="campaign-details-form">
+          <div class="grid-form">
+            <div class="form-group">
+              <label>Campaign Title *</label>
+              <input type="text" id="campaign-name" placeholder="e.g. Festival Boom Sale 2026" required />
+            </div>
+            <div class="form-group">
+              <label>Brand Name *</label>
+              <input type="text" id="campaign-brand" placeholder="e.g. LUROVA Store" required />
+            </div>
+
+            <div class="form-group">
+              <label>Targeted Audience / Industry *</label>
+              <select id="campaign-industry" onchange="handleIndustryChange()" required>
+                <option value="">Choose Industry...</option>
+                <option value="E-Commerce & Retail">E-Commerce & Retail</option>
+                <option value="Real Estate">Real Estate</option>
+                <option value="Education & EdTech">Education & EdTech</option>
+                <option value="Healthcare & Fitness">Healthcare & Fitness</option>
+                <option value="Technology & Software">Technology & Software</option>
+                <option value="Food & Hospitality">Food & Hospitality</option>
+                <option value="Finance & Banking">Finance & Banking</option>
+                <option value="OTHER">Other Industry (Specify Below)</option>
+              </select>
+            </div>
+
+            <div class="form-group hidden" id="custom-industry-group">
+              <label>Enter Custom Industry *</label>
+              <input type="text" id="campaign-custom-industry" placeholder="e.g. Gaming & Esports" />
+            </div>
+
+            <div class="form-group">
+              <label>Targeted Age Group *</label>
+              <select id="campaign-age" required>
+                <option value="">Select Age Group...</option>
+                <option value="Below 18">Below 18</option>
+                <option value="19 - 40">19 - 40</option>
+                <option value="40 - 60">40 - 60</option>
+                <option value="60+">60+</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Targeted Country *</label>
+              <select id="campaign-country" onchange="handleCountryChange()" required>
+                <option value="">Select Country...</option>
+                <option value="India">India</option>
+                <option value="United States">United States</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="United Arab Emirates">United Arab Emirates</option>
+                <option value="Australia">Australia</option>
+                <option value="Canada">Canada</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <div class="label-with-btn">
+                <label>Targeted States / Regions *</label>
+                <button type="button" class="btn-link" onclick="toggleSelectAllStates()">Select / Deselect All</button>
+              </div>
+              <select id="campaign-states" multiple required size="4">
+                <option value="" disabled>Please select a country first</option>
+              </select>
+              <small class="muted-note">Hold Ctrl/Cmd to choose multiple states or click Select All.</small>
+            </div>
+
+            <div class="form-group">
+              <label>Ad Action Button (CTA) *</label>
+              <select id="campaign-cta" onchange="handleCTAChange()" required>
+                <option value="">Select Button Type...</option>
+                <option value="BUY_NOW">BUY NOW</option>
+                <option value="SHOP_NOW">SHOP NOW</option>
+                <option value="OPEN">OPEN</option>
+                <option value="CONTACT_US">CONTACT US</option>
+                <option value="VISIT">VISIT</option>
+                <option value="DOWNLOAD">DOWNLOAD</option>
+                <option value="SIGNUP">SIGNUP</option>
+                <option value="LOGIN">LOGIN</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Redirect Website Link *</label>
+              <input type="url" id="campaign-link" placeholder="https://yourwebsite.com/landing" required />
+            </div>
+
+            <div class="form-group hidden full-width" id="contact-number-group">
+              <label>Contact Phone Number (With Country Code) *</label>
+              <input type="tel" id="campaign-contact-number" placeholder="+91 9876543210" />
+            </div>
+
+            <div class="form-group full-width">
+              <label>Short Description (Headline) *</label>
+              <input type="text" id="campaign-short-desc" maxlength="120" placeholder="e.g. Get 50% Off On All Premium Items Today!" required />
+            </div>
+
+            <div class="form-group full-width">
+              <label>Long Description (Optional)</label>
+              <textarea id="campaign-long-desc" rows="3" placeholder="Provide extra details about your product or promotional offer..."></textarea>
+            </div>
+
+            <div class="form-group full-width">
+              <label>Personalized Ad Tags (Optional)</label>
+              <input type="text" id="campaign-tags" placeholder="Comma separated, e.g. #Fashion, #Discounts, #Trending" />
+            </div>
+          </div>
+
+          <div class="page-actions">
+            <button type="button" class="btn btn-secondary" onclick="navigateTo('view-plans')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+            <button type="submit" class="btn btn-primary">Proceed to Media Upload <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section id="view-upload" class="page-view hidden">
+      <div class="content-box">
+        <span class="badge">Step 4 of 5</span>
+        <h2>Upload Media Assets</h2>
+        <p class="subtitle">Attach your video promo or ad banner image.</p>
+
+        <div id="upload-box" class="upload-area">
+          <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+          <p>Drag and drop video/image files here or <strong>Click to Browse</strong></p>
+          <small>Formats: MP4, MOV, PNG, JPG (Max 100MB)</small>
+          <input type="file" id="file-input" accept="image/*,video/*" />
+        </div>
+
+        <div id="upload-progress-container" class="upload-progress-container hidden">
+          <p id="upload-status-text">Uploading asset file...</p>
+          <div class="progress-bar-bg">
+            <div id="progress-bar-fill" class="progress-bar-fill"></div>
+          </div>
+        </div>
+
+        <div id="file-details-card" class="file-card hidden">
+          <div class="file-info">
+            <i class="fa-solid fa-file-circle-check file-success-icon"></i>
+            <div>
+              <h4 id="file-name-display">ad_creative.mp4</h4>
+              <span id="file-size-display">15.2 MB</span>
+            </div>
+          </div>
+          <div class="file-actions">
+            <button type="button" class="btn btn-small btn-secondary" onclick="reuploadFile()"><i class="fa-solid fa-rotate-right"></i> Re-upload</button>
+            <button type="button" class="btn btn-small btn-danger" onclick="removeFile()"><i class="fa-solid fa-trash"></i> Remove</button>
+          </div>
+        </div>
+
+        <div class="page-actions">
+          <button type="button" class="btn btn-secondary" onclick="navigateTo('view-details')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          <button type="button" id="continue-to-payment-btn" class="btn btn-primary" disabled onclick="showCheckoutScreen()">Proceed to Payment <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-payment" class="page-view hidden">
+      <div class="content-box payment-box">
+        <span class="badge">Step 5 of 5</span>
+        <h2>Summary & Secure Razorpay Payment</h2>
+        
+        <div class="checkout-split">
+          <div class="summary-card">
+            <h3>Campaign Summary</h3>
+            <hr />
+            <p><strong>Brand:</strong> <span id="summary-brand">-</span></p>
+            <p><strong>Platform:</strong> <span id="summary-platform">-</span></p>
+            <p><strong>Package:</strong> <span id="summary-plan">-</span></p>
+            <p><strong>Est. Reach / Scope:</strong> <span id="summary-leads">-</span></p>
+            <p><strong>Target Region:</strong> <span id="summary-region">-</span></p>
+            <p><strong>CTA Button:</strong> <span id="summary-cta">-</span></p>
+            <hr />
+            <p>Standard Price: <span class="strikethrough" id="summary-original-price">₹0</span></p>
+            <p class="discount-label">LUROVA 15% Flat Discount Applied</p>
+            <h2>Total Amount: <span id="summary-final-price" class="gradient-text">₹0</span></h2>
+          </div>
+
+          <div class="gateway-card">
+            <h3>Razorpay Instant Checkout</h3>
+            <p class="subtitle" style="margin-bottom: 1rem;">Supports UPI (GPay, PhonePe, Paytm), Cards, Net Banking, Wallets, & PayLater.</p>
+            
+            <div class="razorpay-badge-box">
+              <i class="fa-solid fa-shield-halved checkout-icon"></i>
+              <div>
+                <strong>256-Bit SSL Secured Payment</strong>
+                <p>Powered by Razorpay Merchant Services</p>
+              </div>
+            </div>
+
+            <div class="page-actions" style="margin-top: 2rem;">
+              <button class="btn btn-secondary" id="payment-back-btn" onclick="navigateTo('view-upload')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+              <button class="btn btn-success btn-lg" onclick="triggerRazorpayPayment()"><i class="fa-solid fa-bolt"></i> Pay Now with Razorpay</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-progress-studio" class="page-view hidden">
+      <div class="content-box studio-box">
+        <div class="studio-header">
+          <h2>Progress Studio <span class="live-dot">● LIVE</span></h2>
+          <p>Monitor active campaigns, assigned agents, runtime remaining, and live updates.</p>
+        </div>
+
+        <div id="campaigns-list" class="campaigns-list">
+          </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
