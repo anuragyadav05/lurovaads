@@ -349,7 +349,7 @@ input:disabled { background: #f1f5f9; cursor: not-allowed; }
 
 .page-actions { display: flex; justify-content: space-between; margin-top: 1.5rem; gap: 10px; }
 
-/* MOBILE RESPONSIVE MEDIA QUERIES */
+/* Mobile Responsive Media Queries */
 @media (max-width: 768px) {
   .mobile-menu-btn { display: block; }
 
