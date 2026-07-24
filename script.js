@@ -1,4 +1,18 @@
-// Razorpay Credentials & App State
+// --- FIREBASE CONFIGURATION & INITIALIZATION ---
+const firebaseConfig = {
+  apiKey: "AIzaSyCZvJC6xQkhuM7MkybSwn7FqW5W-ByTKFk",
+  authDomain: "lurova-account.firebaseapp.com",
+  projectId: "lurova-account",
+  storageBucket: "lurova-account.firebasestorage.app",
+  messagingSenderId: "925302881748",
+  appId: "1:925302881748:web:da8f9f6b298e27b758ea41"
+};
+
+// Initialize Firebase App & Auth Service
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// Global App Configuration & State
 const RAZORPAY_KEY_ID = 'rzp_live_S4aoxO09BneiJ3';
 
 let activeUser = null;
@@ -9,7 +23,7 @@ let uploadedFile = null;
 let userCampaigns = [];
 let isInfluencerFlow = false;
 
-// Country State Mapping
+// Country to State Database Mapping
 const countryStateMap = {
   "India": ["Andhra Pradesh", "Delhi NCR", "Gujarat", "Karnataka", "Maharashtra", "Punjab", "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal"],
   "United States": ["California", "Florida", "Illinois", "New York", "Texas", "Washington"],
@@ -40,7 +54,7 @@ const platforms = [
   { id: 'billboard', name: 'Digital Billboards', icon: 'fa-solid fa-rectangle-ad', desc: 'High-visibility LED outdoor screens.' }
 ];
 
-// 6 Tier Plans
+// 6 Tier Standard Plans
 const sixPlanOptions = [
   { id: 'p1', name: 'Micro Boost', basePrice: 499, leads: '200 - 500', days: 3 },
   { id: 'p2', name: 'Starter Launch', basePrice: 999, leads: '500 - 1,200', days: 5 },
@@ -50,15 +64,31 @@ const sixPlanOptions = [
   { id: 'p6', name: 'Dominator VIP', basePrice: 49999, leads: '100,000+ Reach', days: 45 }
 ];
 
-// Mobile Menu Navigation Handlers
+// --- REAL-TIME FIREBASE AUTHENTICATION LISTENER ---
+auth.onAuthStateChanged(user => {
+  if (user) {
+    activeUser = {
+      uid: user.uid,
+      email: user.email,
+      firstName: user.displayName ? user.displayName.split(' ')[0] : 'User',
+      lastName: user.displayName ? user.displayName.split(' ').slice(1).join(' ') : '',
+      phone: user.phoneNumber || ''
+    };
+    updateUserNav();
+    populateProfileForm();
+  } else {
+    activeUser = null;
+    resetUserNav();
+  }
+});
+
+// Mobile Navigation Drawer Handlers
 function toggleMobileMenu() {
-  const menu = document.getElementById('nav-menu');
-  menu.classList.toggle('open');
+  document.getElementById('nav-menu').classList.toggle('open');
 }
 
 function closeMobileMenu() {
-  const menu = document.getElementById('nav-menu');
-  menu.classList.remove('open');
+  document.getElementById('nav-menu').classList.remove('open');
 }
 
 // Navigation & Auth Guards
@@ -97,7 +127,7 @@ function startCampaignWith(platformId) {
   if (p) choosePlatform(p.id, p.name);
 }
 
-// CAPTCHA
+// CAPTCHA Generator
 function initCaptcha() {
   const n1 = Math.floor(Math.random() * 9) + 1;
   const n2 = Math.floor(Math.random() * 9) + 1;
@@ -108,15 +138,18 @@ function initCaptcha() {
   }
 }
 
-// AUTHENTICATION
-document.getElementById('signup-form').addEventListener('submit', function (e) {
+// --- FIREBASE AUTHENTICATION ACTIONS ---
+document.getElementById('signup-form').addEventListener('submit', async function (e) {
   e.preventDefault();
-  const pass = document.getElementById('signup-password').value;
+  const firstName = document.getElementById('signup-firstname').value;
+  const lastName = document.getElementById('signup-lastname').value;
+  const email = document.getElementById('signup-email').value;
+  const password = document.getElementById('signup-password').value;
   const confirmPass = document.getElementById('signup-confirm-password').value;
   const userAns = document.getElementById('captcha-answer').value;
   const expectedAns = document.getElementById('captcha-question').dataset.answer;
 
-  if (pass !== confirmPass) {
+  if (password !== confirmPass) {
     alert('Passwords do not match!');
     return;
   }
@@ -126,42 +159,31 @@ document.getElementById('signup-form').addEventListener('submit', function (e) {
     return;
   }
 
-  const userData = {
-    firstName: document.getElementById('signup-firstname').value,
-    lastName: document.getElementById('signup-lastname').value,
-    email: document.getElementById('signup-email').value,
-    phone: document.getElementById('signup-phone').value,
-    password: pass
-  };
+  try {
+    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+    await userCredential.user.updateProfile({
+      displayName: `${firstName} ${lastName}`
+    });
 
-  localStorage.setItem('luROVA_user_' + userData.email, JSON.stringify(userData));
-  localStorage.setItem('luROVA_user_' + userData.phone, JSON.stringify(userData));
-
-  alert('Registration Successful! Please log in.');
-  navigateTo('view-login');
+    alert('Registration Successful! Account created.');
+    navigateTo('view-home');
+  } catch (error) {
+    alert(`Registration Error: ${error.message}`);
+  }
 });
 
-document.getElementById('login-form').addEventListener('submit', function (e) {
+document.getElementById('login-form').addEventListener('submit', async function (e) {
   e.preventDefault();
-  const identifier = document.getElementById('login-identifier').value.trim();
-  const pass = document.getElementById('login-password').value;
+  const email = document.getElementById('login-identifier').value.trim();
+  const password = document.getElementById('login-password').value;
 
-  const stored = localStorage.getItem('luROVA_user_' + identifier);
-  if (!stored) {
-    alert('Account not found! Please check details or sign up.');
-    return;
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+    alert('Login Successful!');
+    navigateTo('view-home');
+  } catch (error) {
+    alert(`Login Failed: ${error.message}`);
   }
-
-  const user = JSON.parse(stored);
-  if (user.password !== pass) {
-    alert('Invalid Password!');
-    return;
-  }
-
-  activeUser = user;
-  updateUserNav();
-  populateProfileForm();
-  navigateTo('view-home');
 });
 
 function updateUserNav() {
@@ -177,13 +199,29 @@ function updateUserNav() {
   mobileArea.innerHTML = authMarkup;
 }
 
-function logout() {
-  activeUser = null;
-  location.reload();
+function resetUserNav() {
+  const desktopArea = document.getElementById('nav-user-area');
+  const mobileArea = document.getElementById('mobile-nav-user-area');
+
+  const defaultMarkup = `
+    <button class="btn btn-secondary" onclick="navigateTo('view-login')"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+    <button class="btn btn-primary" onclick="navigateTo('view-signup')">Sign Up</button>
+  `;
+
+  desktopArea.innerHTML = defaultMarkup;
+  mobileArea.innerHTML = defaultMarkup;
 }
 
-// PROFILE
+function logout() {
+  auth.signOut().then(() => {
+    alert('Logged out successfully.');
+    navigateTo('view-home');
+  });
+}
+
+// PROFILE MANAGEMENT
 function populateProfileForm() {
+  if (!activeUser) return;
   document.getElementById('profile-fullname').innerText = `${activeUser.firstName} ${activeUser.lastName}`;
   document.getElementById('profile-firstname').value = activeUser.firstName;
   document.getElementById('profile-lastname').value = activeUser.lastName;
@@ -208,22 +246,24 @@ function toggleProfileEdit() {
   }
 }
 
-document.getElementById('profile-form').addEventListener('submit', function (e) {
+document.getElementById('profile-form').addEventListener('submit', async function (e) {
   e.preventDefault();
-  activeUser.firstName = document.getElementById('profile-firstname').value;
-  activeUser.lastName = document.getElementById('profile-lastname').value;
-  activeUser.phone = document.getElementById('profile-phone').value;
+  const firstName = document.getElementById('profile-firstname').value;
+  const lastName = document.getElementById('profile-lastname').value;
 
-  localStorage.setItem('luROVA_user_' + activeUser.email, JSON.stringify(activeUser));
-  localStorage.setItem('luROVA_user_' + activeUser.phone, JSON.stringify(activeUser));
-
-  alert('Profile updated successfully!');
-  toggleProfileEdit();
-  updateUserNav();
-  populateProfileForm();
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      await user.updateProfile({ displayName: `${firstName} ${lastName}` });
+      alert('Profile updated successfully!');
+      toggleProfileEdit();
+    }
+  } catch (error) {
+    alert(`Update Error: ${error.message}`);
+  }
 });
 
-// PLATFORMS & PLANS
+// PLATFORMS & PLANS RENDERER
 function renderPlatforms() {
   const grid = document.getElementById('platform-grid');
   const homeGrid = document.getElementById('home-services-grid');
@@ -330,7 +370,7 @@ function proceedToInfluencerPayment() {
   };
 
   campaignFormValues = {
-    brand: activeUser.firstName + "'s Brand",
+    brand: (activeUser ? activeUser.firstName : 'User') + "'s Brand",
     name: 'Influencer Marketing Consultation',
     country: 'India',
     states: ['All States'],
@@ -478,7 +518,7 @@ function reuploadFile() {
   fileInput.click();
 }
 
-// CHECKOUT & RAZORPAY
+// CHECKOUT & RAZORPAY INTEGRATION
 function showCheckoutScreen() {
   document.getElementById('summary-brand').innerText = campaignFormValues.brand;
   document.getElementById('summary-platform').innerText = currentPlatform.name;
@@ -513,9 +553,9 @@ function triggerRazorpayPayment() {
       completeOrderPlacement();
     },
     "prefill": {
-      "name": `${activeUser.firstName} ${activeUser.lastName}`,
-      "email": activeUser.email,
-      "contact": activeUser.phone
+      "name": activeUser ? `${activeUser.firstName} ${activeUser.lastName}` : 'Customer',
+      "email": activeUser ? activeUser.email : '',
+      "contact": activeUser ? activeUser.phone : ''
     },
     "theme": { "color": "#4F46E5" }
   };
@@ -565,6 +605,7 @@ function renderStudio() {
   `).join('');
 }
 
+// Page Initialization
 window.onload = () => {
   renderPlatforms();
   initCaptcha();
