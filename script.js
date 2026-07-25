@@ -98,6 +98,24 @@ function closeMobileMenu() {
   document.getElementById('nav-menu').classList.remove('open');
 }
 
+// Toggle Profile Dropdown
+function toggleProfileDropdown(dropdownId) {
+  const menu = document.getElementById(dropdownId);
+  if (menu) {
+    menu.classList.toggle('hidden');
+  }
+}
+
+// Close dropdown when clicking anywhere outside
+document.addEventListener('click', function(event) {
+  const dropdowns = document.querySelectorAll('.profile-dropdown-menu');
+  dropdowns.forEach(menu => {
+    if (!menu.contains(event.target) && !event.target.closest('.user-menu-wrapper')) {
+      menu.classList.add('hidden');
+    }
+  });
+});
+
 // Navigation & Auth Guards
 function navigateTo(viewId) {
   document.querySelectorAll('.page-view').forEach(view => view.classList.add('hidden'));
@@ -134,27 +152,55 @@ function startCampaignWith(platformId) {
   if (p) choosePlatform(p.id, p.name);
 }
 
-// UI Navbar Updates
+// UI Navbar Updates for Logged-In User
 function updateUserNav() {
   const desktopArea = document.getElementById('nav-user-area');
   const mobileArea = document.getElementById('mobile-nav-user-area');
 
   const authMarkup = `
-    <button class="btn btn-secondary" onclick="redirectToAccount()"><i class="fa-solid fa-user"></i> ${activeUser.firstName}</button>
-    <button class="btn btn-danger btn-small" onclick="logout()"><i class="fa-solid fa-power-off"></i> Logout</button>
+    <div class="user-menu-wrapper">
+      <button class="btn btn-secondary" onclick="toggleProfileDropdown('desktop-profile-menu')">
+        <i class="fa-solid fa-circle-user"></i> ${activeUser.firstName} <i class="fa-solid fa-chevron-down" style="font-size:0.75rem; margin-left:4px;"></i>
+      </button>
+      <div id="desktop-profile-menu" class="profile-dropdown-menu hidden">
+        <button class="dropdown-item" onclick="redirectToAccount()">
+          <i class="fa-solid fa-user-gear"></i> View Profile
+        </button>
+        <button class="dropdown-item danger-text" onclick="logout()">
+          <i class="fa-solid fa-power-off"></i> Logout
+        </button>
+      </div>
+    </div>
+  `;
+
+  const mobileAuthMarkup = `
+    <div class="user-menu-wrapper" style="width:100%;">
+      <button class="btn btn-secondary" style="width:100%; justify-content:space-between;" onclick="toggleProfileDropdown('mobile-profile-menu')">
+        <span><i class="fa-solid fa-circle-user"></i> ${activeUser.firstName}</span>
+        <i class="fa-solid fa-chevron-down" style="font-size:0.75rem;"></i>
+      </button>
+      <div id="mobile-profile-menu" class="profile-dropdown-menu hidden" style="position:static; width:100%; margin-top:6px;">
+        <button class="dropdown-item" onclick="redirectToAccount()">
+          <i class="fa-solid fa-user-gear"></i> View Profile
+        </button>
+        <button class="dropdown-item danger-text" onclick="logout()">
+          <i class="fa-solid fa-power-off"></i> Logout
+        </button>
+      </div>
+    </div>
   `;
 
   if (desktopArea) desktopArea.innerHTML = authMarkup;
-  if (mobileArea) mobileArea.innerHTML = authMarkup;
+  if (mobileArea) mobileArea.innerHTML = mobileAuthMarkup;
 }
 
+// UI Navbar Reset for Logged-Out Guest
 function resetUserNav() {
   const desktopArea = document.getElementById('nav-user-area');
   const mobileArea = document.getElementById('mobile-nav-user-area');
 
   const defaultMarkup = `
-    <button class="btn btn-secondary" onclick="redirectToAccount()"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
-    <button class="btn btn-primary" onclick="redirectToAccount()">Sign Up</button>
+    <button class="btn btn-primary" onclick="redirectToAccount()"><i class="fa-solid fa-right-to-bracket"></i> Login / Sign Up</button>
   `;
 
   if (desktopArea) desktopArea.innerHTML = defaultMarkup;
