@@ -73,7 +73,7 @@ function redirectToAccount() {
   window.location.href = `${ACCOUNT_URL}/?redirect_to=${currentUrl}`;
 }
 
-// Check for user session data passed back in URL parameter from account.lurova.life
+// Check for session in URL param or restore from storage
 function checkUrlForUserSession() {
   const urlParams = new URLSearchParams(window.location.search);
   const userParam = urlParams.get('user');
@@ -81,29 +81,12 @@ function checkUrlForUserSession() {
   if (userParam) {
     try {
       const userData = JSON.parse(decodeURIComponent(userParam));
-      
-      // Determine display name properly
-      const nameString = userData.displayName || userData.firstName || userData.name || (userData.email ? userData.email.split('@')[0] : 'Account');
-      const firstName = nameString.split(' ')[0];
-
-      activeUser = {
-        uid: userData.uid,
-        email: userData.email || '',
-        firstName: firstName,
-        fullName: nameString,
-        phone: userData.phone || ''
-      };
-      
-      localStorage.setItem('lurova_active_user', JSON.stringify(activeUser));
-      updateUserNav();
-      
-      // Clean up URL parameters without refreshing
+      setUserSession(userData);
       window.history.replaceState({}, document.title, window.location.pathname);
     } catch (e) {
-      console.error("Error parsing user session parameter:", e);
+      console.error("Error parsing user session:", e);
     }
   } else {
-    // Restore saved session from local storage backup
     const savedUser = localStorage.getItem('lurova_active_user');
     if (savedUser) {
       try {
@@ -116,19 +99,54 @@ function checkUrlForUserSession() {
   }
 }
 
+// Helper to save session data properly
+function setUserSession(userData) {
+  const nameString = userData.displayName || userData.firstName || userData.name || (userData.email ? userData.email.split('@')[0] : 'Account');
+  const firstName = nameString.split(' ')[0];
+
+  activeUser = {
+    uid: userData.uid,
+    email: userData.email || '',
+    firstName: firstName,
+    fullName: nameString,
+    phone: userData.phone || ''
+  };
+
+  localStorage.setItem('lurova_active_user', JSON.stringify(activeUser));
+  updateUserNav();
+}
+
+// --- AUTOMATIC BACKGROUND SSO AUTO-LOGIN CHECK ---
+function initSSOBridge() {
+  const iframe = document.getElementById('sso-bridge-iframe');
+  
+  // Ask account.lurova.life if user is already logged in
+  if (iframe) {
+    iframe.onload = function() {
+      iframe.contentWindow.postMessage('CHECK_LUROVA_SESSION', '*');
+    };
+  }
+
+  // Listen for session response from account.lurova.life iframe
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'LUROVA_SESSION_RESPONSE') {
+      if (event.data.user) {
+        setUserSession(event.data.user);
+      }
+    }
+  });
+}
+
 // --- REAL-TIME FIREBASE AUTHENTICATION LISTENER ---
 auth.onAuthStateChanged(user => {
   if (user) {
     const nameString = user.displayName || user.email.split('@')[0];
-    activeUser = {
+    setUserSession({
       uid: user.uid,
       email: user.email,
-      firstName: nameString.split(' ')[0],
-      fullName: nameString,
+      displayName: nameString,
       phone: user.phoneNumber || ''
-    };
-    localStorage.setItem('lurova_active_user', JSON.stringify(activeUser));
-    updateUserNav();
+    });
   } else if (!localStorage.getItem('lurova_active_user')) {
     activeUser = null;
     resetUserNav();
@@ -507,7 +525,7 @@ function showCheckoutScreen() {
   document.getElementById('summary-original-price').innerText = `₹${currentPlan.originalPrice}`;
   document.getElementById('summary-final-price').innerText = `₹${currentPlan.finalPrice}`;
 
-  document.getElementById('payment-back-btn').onclick = () => navigateTo('view-upload');
+  document.getElementById('payment-back-btn').onclick = () => navigateTo('view-plans');
 
   navigateTo('view-payment');
 }
@@ -586,5 +604,6 @@ function renderStudio() {
 // Initial Page Setup
 window.onload = () => {
   checkUrlForUserSession();
+  initSSOBridge();
   renderPlatforms();
 };
