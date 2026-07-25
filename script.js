@@ -67,9 +67,41 @@ const sixPlanOptions = [
   { id: 'p6', name: 'Dominator VIP', basePrice: 49999, leads: '100,000+ Reach', days: 45 }
 ];
 
-// Redirect to Central Account Portal
+// Redirect to Central Account Portal with return parameter
 function redirectToAccount() {
-  window.location.href = ACCOUNT_URL;
+  const currentUrl = encodeURIComponent(window.location.origin + window.location.pathname);
+  window.location.href = `${ACCOUNT_URL}/?redirect_to=${currentUrl}`;
+}
+
+// Check for user data passed back from account portal in URL parameters
+function checkUrlForUserSession() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const userParam = urlParams.get('user');
+  
+  if (userParam) {
+    try {
+      const userData = JSON.parse(decodeURIComponent(userParam));
+      localStorage.setItem('lurova_active_user', JSON.stringify(userData));
+      activeUser = userData;
+      updateUserNav();
+      
+      // Clean URL parameters without reloading
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } catch (e) {
+      console.error("Error parsing user session parameter:", e);
+    }
+  } else {
+    // Try restoring from local storage backup
+    const savedUser = localStorage.getItem('lurova_active_user');
+    if (savedUser) {
+      try {
+        activeUser = JSON.parse(savedUser);
+        updateUserNav();
+      } catch (e) {
+        localStorage.removeItem('lurova_active_user');
+      }
+    }
+  }
 }
 
 // --- REAL-TIME FIREBASE AUTHENTICATION LISTENER ---
@@ -82,8 +114,9 @@ auth.onAuthStateChanged(user => {
       lastName: user.displayName ? user.displayName.split(' ').slice(1).join(' ') : '',
       phone: user.phoneNumber || ''
     };
+    localStorage.setItem('lurova_active_user', JSON.stringify(activeUser));
     updateUserNav();
-  } else {
+  } else if (!localStorage.getItem('lurova_active_user')) {
     activeUser = null;
     resetUserNav();
   }
@@ -208,6 +241,7 @@ function resetUserNav() {
 }
 
 function logout() {
+  localStorage.removeItem('lurova_active_user');
   auth.signOut().then(() => {
     alert('Logged out successfully.');
     resetUserNav();
@@ -559,5 +593,6 @@ function renderStudio() {
 
 // Initial Page Setup
 window.onload = () => {
+  checkUrlForUserSession();
   renderPlatforms();
 };
