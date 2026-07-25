@@ -452,5 +452,5 @@ input:disabled { background: #f1f5f9; cursor: not-allowed; }
   .plans-grid { grid-template-columns: 1fr; }
   .stats-banner { grid-template-columns: 1fr 1fr; }
   .content-box { padding: 1.5rem 1rem; }
-  .user-name-text { display: none; } /* Show icon only on very small screens to fit neatly */
+  .user-name-text { display: none; }
 }
