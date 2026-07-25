@@ -13,10 +13,16 @@
 
   <header class="navbar">
     <div class="logo" onclick="navigateTo('view-home')">LUROVA <span class="highlight">Ads</span></div>
-    
-    <button class="mobile-menu-btn" id="mobile-menu-toggle" onclick="toggleMobileMenu()">
-      <i class="fa-solid fa-bars"></i>
-    </button>
+
+    <div class="nav-header-right">
+      <div class="nav-auth-container" id="nav-user-area">
+        <button class="btn btn-primary nav-auth-btn" onclick="redirectToAccount()"><i class="fa-solid fa-right-to-bracket"></i> Login / Sign Up</button>
+      </div>
+
+      <button class="mobile-menu-btn" id="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
 
     <nav class="nav-links" id="nav-menu">
       <a href="#" onclick="navigateTo('view-home'); closeMobileMenu();">Home</a>
@@ -24,14 +30,7 @@
       <a href="#" onclick="scrollToSection('how-it-works'); closeMobileMenu();">How It Works</a>
       <a href="#" onclick="navigateTo('view-platforms'); closeMobileMenu();">Ad Platforms</a>
       <a href="#" onclick="requireAuth('view-progress-studio'); closeMobileMenu();">Progress Studio</a>
-      
-      <div class="mobile-auth-area" id="mobile-nav-user-area">
-        </div>
     </nav>
-
-    <div class="nav-right desktop-auth-only" id="nav-user-area">
-      <button class="btn btn-primary" onclick="redirectToAccount()"><i class="fa-solid fa-right-to-bracket"></i> Login / Sign Up</button>
-    </div>
   </header>
 
   <main class="main-container">
