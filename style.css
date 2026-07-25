@@ -185,7 +185,7 @@ body {
 .step-num { font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 0.4rem; }
 
 /* Cards & Forms */
-.auth-card, .content-box, .profile-card {
+.content-box {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -195,8 +195,6 @@ body {
   box-shadow: var(--shadow);
   text-align: center;
 }
-.auth-card { max-width: 480px; text-align: left; }
-.profile-card { max-width: 650px; text-align: left; }
 .details-box, .studio-box { max-width: 900px; text-align: left; }
 
 .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -237,11 +235,6 @@ input:disabled { background: #f1f5f9; cursor: not-allowed; }
 .perk-item i { color: var(--success); }
 .influencer-pricing-card { background: #fff; padding: 1rem 1.2rem; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 1.2rem; }
 
-/* Profile View */
-.profile-header { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.8rem; }
-.avatar-wrap img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); }
-.profile-actions { display: flex; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap; }
-
 /* Buttons */
 .btn {
   padding: 0.75rem 1.4rem;
@@ -262,7 +255,6 @@ input:disabled { background: #f1f5f9; cursor: not-allowed; }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-lg { padding: 0.85rem 1.6rem; font-size: 0.98rem; }
 .btn-small { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
-.auth-switch { margin-top: 1rem; font-size: 0.85rem; text-align: center; }
 
 /* Platform & Plans Grids */
 .platform-grid {
@@ -382,7 +374,6 @@ input:disabled { background: #f1f5f9; cursor: not-allowed; }
   .checkout-split { grid-template-columns: 1fr; }
   .full-mobile-btn { width: 100%; }
 
-  .profile-header { flex-direction: column; text-align: center; }
   .page-actions { flex-direction: column-reverse; }
   .page-actions button { width: 100%; }
 }
@@ -391,5 +382,5 @@ input:disabled { background: #f1f5f9; cursor: not-allowed; }
   .platform-grid { grid-template-columns: repeat(2, 1fr); }
   .plans-grid { grid-template-columns: 1fr; }
   .stats-banner { grid-template-columns: 1fr 1fr; }
-  .content-box, .auth-card, .profile-card { padding: 1.5rem 1rem; }
+  .content-box { padding: 1.5rem 1rem; }
 }
