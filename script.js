@@ -67,13 +67,13 @@ const sixPlanOptions = [
   { id: 'p6', name: 'Dominator VIP', basePrice: 49999, leads: '100,000+ Reach', days: 45 }
 ];
 
-// Redirect to Central Account Portal with return parameter
+// Redirect to Central Account Portal
 function redirectToAccount() {
   const currentUrl = encodeURIComponent(window.location.origin + window.location.pathname);
   window.location.href = `${ACCOUNT_URL}/?redirect_to=${currentUrl}`;
 }
 
-// Check for user data passed back from account portal in URL parameters
+// Check for user session data passed back in URL parameter from account.lurova.life
 function checkUrlForUserSession() {
   const urlParams = new URLSearchParams(window.location.search);
   const userParam = urlParams.get('user');
@@ -81,17 +81,29 @@ function checkUrlForUserSession() {
   if (userParam) {
     try {
       const userData = JSON.parse(decodeURIComponent(userParam));
-      localStorage.setItem('lurova_active_user', JSON.stringify(userData));
-      activeUser = userData;
+      
+      // Determine display name properly
+      const nameString = userData.displayName || userData.firstName || userData.name || (userData.email ? userData.email.split('@')[0] : 'Account');
+      const firstName = nameString.split(' ')[0];
+
+      activeUser = {
+        uid: userData.uid,
+        email: userData.email || '',
+        firstName: firstName,
+        fullName: nameString,
+        phone: userData.phone || ''
+      };
+      
+      localStorage.setItem('lurova_active_user', JSON.stringify(activeUser));
       updateUserNav();
       
-      // Clean URL parameters without reloading
+      // Clean up URL parameters without refreshing
       window.history.replaceState({}, document.title, window.location.pathname);
     } catch (e) {
       console.error("Error parsing user session parameter:", e);
     }
   } else {
-    // Try restoring from local storage backup
+    // Restore saved session from local storage backup
     const savedUser = localStorage.getItem('lurova_active_user');
     if (savedUser) {
       try {
@@ -107,11 +119,12 @@ function checkUrlForUserSession() {
 // --- REAL-TIME FIREBASE AUTHENTICATION LISTENER ---
 auth.onAuthStateChanged(user => {
   if (user) {
+    const nameString = user.displayName || user.email.split('@')[0];
     activeUser = {
       uid: user.uid,
       email: user.email,
-      firstName: user.displayName ? user.displayName.split(' ')[0] : 'Account',
-      lastName: user.displayName ? user.displayName.split(' ').slice(1).join(' ') : '',
+      firstName: nameString.split(' ')[0],
+      fullName: nameString,
       phone: user.phoneNumber || ''
     };
     localStorage.setItem('lurova_active_user', JSON.stringify(activeUser));
@@ -131,7 +144,7 @@ function closeMobileMenu() {
   document.getElementById('nav-menu').classList.remove('open');
 }
 
-// Toggle Profile Dropdown
+// Profile Dropdown Toggle
 function toggleProfileDropdown(dropdownId) {
   const menu = document.getElementById(dropdownId);
   if (menu) {
@@ -139,7 +152,7 @@ function toggleProfileDropdown(dropdownId) {
   }
 }
 
-// Close dropdown when clicking anywhere outside
+// Close dropdown menu when clicking anywhere outside
 document.addEventListener('click', function(event) {
   const dropdowns = document.querySelectorAll('.profile-dropdown-menu');
   dropdowns.forEach(menu => {
@@ -187,15 +200,17 @@ function startCampaignWith(platformId) {
 
 // UI Navbar Updates for Logged-In User
 function updateUserNav() {
-  const desktopArea = document.getElementById('nav-user-area');
-  const mobileArea = document.getElementById('mobile-nav-user-area');
+  const userArea = document.getElementById('nav-user-area');
+  if (!userArea) return;
 
-  const authMarkup = `
+  const displayName = (activeUser && activeUser.firstName) ? activeUser.firstName : 'Profile';
+
+  userArea.innerHTML = `
     <div class="user-menu-wrapper">
-      <button class="btn btn-secondary" onclick="toggleProfileDropdown('desktop-profile-menu')">
-        <i class="fa-solid fa-circle-user"></i> ${activeUser.firstName} <i class="fa-solid fa-chevron-down" style="font-size:0.75rem; margin-left:4px;"></i>
+      <button class="btn btn-secondary nav-auth-btn" onclick="toggleProfileDropdown('nav-profile-menu')">
+        <i class="fa-solid fa-circle-user"></i> <span class="user-name-text">${displayName}</span> <i class="fa-solid fa-chevron-down" style="font-size:0.7rem; margin-left:2px;"></i>
       </button>
-      <div id="desktop-profile-menu" class="profile-dropdown-menu hidden">
+      <div id="nav-profile-menu" class="profile-dropdown-menu hidden">
         <button class="dropdown-item" onclick="redirectToAccount()">
           <i class="fa-solid fa-user-gear"></i> View Profile
         </button>
@@ -205,39 +220,16 @@ function updateUserNav() {
       </div>
     </div>
   `;
-
-  const mobileAuthMarkup = `
-    <div class="user-menu-wrapper" style="width:100%;">
-      <button class="btn btn-secondary" style="width:100%; justify-content:space-between;" onclick="toggleProfileDropdown('mobile-profile-menu')">
-        <span><i class="fa-solid fa-circle-user"></i> ${activeUser.firstName}</span>
-        <i class="fa-solid fa-chevron-down" style="font-size:0.75rem;"></i>
-      </button>
-      <div id="mobile-profile-menu" class="profile-dropdown-menu hidden" style="position:static; width:100%; margin-top:6px;">
-        <button class="dropdown-item" onclick="redirectToAccount()">
-          <i class="fa-solid fa-user-gear"></i> View Profile
-        </button>
-        <button class="dropdown-item danger-text" onclick="logout()">
-          <i class="fa-solid fa-power-off"></i> Logout
-        </button>
-      </div>
-    </div>
-  `;
-
-  if (desktopArea) desktopArea.innerHTML = authMarkup;
-  if (mobileArea) mobileArea.innerHTML = mobileAuthMarkup;
 }
 
 // UI Navbar Reset for Logged-Out Guest
 function resetUserNav() {
-  const desktopArea = document.getElementById('nav-user-area');
-  const mobileArea = document.getElementById('mobile-nav-user-area');
+  const userArea = document.getElementById('nav-user-area');
+  if (!userArea) return;
 
-  const defaultMarkup = `
-    <button class="btn btn-primary" onclick="redirectToAccount()"><i class="fa-solid fa-right-to-bracket"></i> Login / Sign Up</button>
+  userArea.innerHTML = `
+    <button class="btn btn-primary nav-auth-btn" onclick="redirectToAccount()"><i class="fa-solid fa-right-to-bracket"></i> Login / Sign Up</button>
   `;
-
-  if (desktopArea) desktopArea.innerHTML = defaultMarkup;
-  if (mobileArea) mobileArea.innerHTML = defaultMarkup;
 }
 
 function logout() {
@@ -539,7 +531,7 @@ function triggerRazorpayPayment() {
       completeOrderPlacement();
     },
     "prefill": {
-      "name": activeUser ? `${activeUser.firstName} ${activeUser.lastName}` : 'Customer',
+      "name": activeUser ? (activeUser.fullName || `${activeUser.firstName} ${activeUser.lastName || ''}`) : 'Customer',
       "email": activeUser ? activeUser.email : '',
       "contact": activeUser ? activeUser.phone : ''
     },
