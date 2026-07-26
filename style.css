@@ -383,13 +383,13 @@ input:disabled { background: #f1f5f9; cursor: not-allowed; }
 .file-info { display: flex; align-items: center; gap: 0.8rem; text-align: left; }
 .file-success-icon { font-size: 1.5rem; color: var(--success); }
 
-/* Payment & Progress Studio */
+/* Cashfree Payment Badge & Progress Studio */
 .payment-box { max-width: 900px; text-align: left; }
 .checkout-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem; }
 .summary-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; }
 .discount-label { color: var(--success); font-weight: 700; font-size: 0.85rem; }
 
-.razorpay-badge-box {
+.cashfree-badge-box {
   display: flex;
   align-items: center;
   gap: 0.8rem;
