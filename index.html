@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 </head>
 <body>
 
@@ -318,7 +318,7 @@
     <section id="view-payment" class="page-view hidden">
       <div class="content-box payment-box">
         <span class="badge">Step 5 of 5</span>
-        <h2>Summary & Secure Razorpay Payment</h2>
+        <h2>Summary & Secure Cashfree Payment</h2>
         
         <div class="checkout-split">
           <div class="summary-card">
@@ -337,20 +337,20 @@
           </div>
 
           <div class="gateway-card">
-            <h3>Razorpay Instant Checkout</h3>
-            <p class="subtitle" style="margin-bottom: 1rem;">Supports UPI (GPay, PhonePe, Paytm), Cards, Net Banking, Wallets, & PayLater.</p>
+            <h3>Cashfree Instant Checkout</h3>
+            <p class="subtitle" style="margin-bottom: 1rem;">Supports UPI (GPay, PhonePe, Paytm), Credit/Debit Cards, Net Banking, Wallets, & PayLater.</p>
             
-            <div class="razorpay-badge-box">
+            <div class="cashfree-badge-box">
               <i class="fa-solid fa-shield-halved checkout-icon"></i>
               <div>
-                <strong>256-Bit SSL Secured Payment</strong>
-                <p>Powered by Razorpay Merchant Services</p>
+                <strong>PCI-DSS 256-Bit Encrypted Payment</strong>
+                <p>Powered by Cashfree Merchant Services</p>
               </div>
             </div>
 
             <div class="page-actions" style="margin-top: 2rem;">
               <button class="btn btn-secondary" id="payment-back-btn" onclick="navigateTo('view-upload')"><i class="fa-solid fa-arrow-left"></i> Back</button>
-              <button class="btn btn-success btn-lg full-mobile-btn" onclick="triggerRazorpayPayment()"><i class="fa-solid fa-bolt"></i> Pay Now with Razorpay</button>
+              <button class="btn btn-success btn-lg full-mobile-btn" onclick="triggerCashfreePayment()"><i class="fa-solid fa-bolt"></i> Pay Now with Cashfree</button>
             </div>
           </div>
         </div>
